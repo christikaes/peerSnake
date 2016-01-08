@@ -1,3 +1,3 @@
 $(document).ready(function(){
-	console.log("Hello Snake")
+	console.log("Hello Snake");
 })
