@@ -67,7 +67,7 @@ $(document).ready(function(){
 
 	var snake = [{x:10,y:10}];
 
-	FPS = 4;
+	FPS = 15;
 	setInterval(function(){
 		update();
 		draw();
@@ -126,7 +126,7 @@ $(document).ready(function(){
 		var xLength = gameState[0].length;
 		var yLength = gameState.length;
 
-		var padding = 5;
+		var padding = 0;
 
 		var remX = canvasWidth - padding*(xLength-1);
 		var remY = canvasWidth - padding*(yLength-1);
