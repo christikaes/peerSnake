@@ -33,6 +33,13 @@ $(document).ready(function(){
 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	];
 
+	var tileTypes = {
+		blank : 0,
+		snake : 1,
+		food : 2,
+		otherPlayer : 3
+	}
+
 	var snakeDirections = {
 		up : {x: -1, y: 0},
 		down : {x:1, y: 0},
@@ -44,7 +51,6 @@ $(document).ready(function(){
 
 	$(document).keydown(function(e){
 		e.preventDefault();
-		console.log(e.keyCode)
 		switch (e.keyCode) {
 			case 38 :
 				snakeDirection = snakeDirections.up;
@@ -61,13 +67,11 @@ $(document).ready(function(){
 			default:
 				break;
 		}
-		console.log(snakeDirection)
 	});
-
 
 	var snake = [{x:10,y:10}];
 
-	FPS = 15;
+	FPS = 10;
 	setInterval(function(){
 		update();
 		draw();
@@ -97,7 +101,11 @@ $(document).ready(function(){
 		// Check for Food:
 		if(gameState[newX][newY] == 2){
 			eat = true;
-			gameState[Math.floor(Math.random()*20)][Math.floor(Math.random()*20)] = 2;
+			randX = Math.floor(Math.random()*20);
+			randY = Math.floor(Math.random()*20);
+			if(gameState[randX][randY] == tileTypes.blank){
+				gameState[randX][randY] = tileTypes.food;
+			}
 		}
 
 		// remove dot from end
@@ -105,16 +113,18 @@ $(document).ready(function(){
 			snake.pop();
 		}
 
+		// clear the snake
 		for(i=0; i<gameWidth; i++){
 			for(j=0; j<gameHeight; j++){
-				if(gameState[i][j] == 1){
-					gameState[i][j] = 0
+				if(gameState[i][j] == tileTypes.snake){
+					gameState[i][j] = tileTypes.blank
 				};
 			}
 		}
 
+		// draw the snake
 		for(i = 0; i<snake.length;i++){
-			gameState[snake[i].x][snake[i].y] = 1
+			gameState[snake[i].x][snake[i].y] = tileTypes.snake
 		}
 
 	}
@@ -136,17 +146,22 @@ $(document).ready(function(){
 
 		for(i = 0; i < xLength; i++){
 			for(j = 0; j < yLength; j++){
-				if(gameState[i][j] == 0){
+				if(gameState[i][j] == tileTypes.blank){
 					context.fillStyle = "#eee";
 					context.fillRect(j * (squareHeight + padding), i*(squareWidth + padding),squareHeight , squareWidth);
-				} else if (gameState[i][j] == 1){
+				} else if (gameState[i][j] == tileTypes.food){
+					context.fillStyle = "#f00";
+					context.fillRect(j * (squareHeight + padding), i*(squareWidth + padding),squareHeight , squareWidth);
+				} else if (gameState[i][j] == tileTypes.snake){
 					context.fillStyle = "#000";
 					context.beginPath();
 				    context.arc(j * (squareHeight + padding) + squareWidth/2, i*(squareWidth + padding)+ squareWidth/2, squareWidth/2, 0, 2 * Math.PI, false);
 				    context.fill();
-				} else {
-					context.fillStyle = "#f00";
-					context.fillRect(j * (squareHeight + padding), i*(squareWidth + padding),squareHeight , squareWidth);
+				} else if (gameState[i][j] == tileTypes.otherPlayer){
+					context.fillStyle = "#00f";
+					context.beginPath();
+				    context.arc(j * (squareHeight + padding) + squareWidth/2, i*(squareWidth + padding)+ squareWidth/2, squareWidth/2, 0, 2 * Math.PI, false);
+				    context.fill();
 				}
 			}
 		}
